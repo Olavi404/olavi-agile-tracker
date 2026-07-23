@@ -49,6 +49,8 @@ function validateStoryInput(input, { partial = false } = {}) {
       errors.push('Punktid peavad olema täisarv.');
     } else if (points < 0) {
       errors.push('Punktid ei tohi olla negatiivsed.');
+    } else if (points > 1000) {
+      errors.push('Punktid ei tohi olla suuremad kui 1000.');
     }
   }
 
