@@ -471,8 +471,8 @@ el.saveStoryBtn.addEventListener('click', async () => {
   };
 
   if (!payload.title) return showToast('Pealkiri on kohustuslik.', 'error');
-  if (!Number.isInteger(payload.points) || payload.points < 0) {
-    return showToast('Punktid peavad olema mittenegatiivne täisarv.', 'error');
+  if (!Number.isInteger(payload.points) || payload.points < 0 || payload.points > 1000) {
+    return showToast('Punktid peavad olema täisarv vahemikus 0–1000.', 'error');
   }
   if (payload.acceptanceCriteria.length === 0) {
     return showToast('Lisa vähemalt üks vastuvõtutingimus.', 'error');
