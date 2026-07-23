@@ -8,6 +8,7 @@
 
 const API_BASE = '/api/stories';
 const STATUSES = ['todo', 'doing', 'done'];
+const TITLE_MAX_LENGTH = 200;
 
 /** @type {Array<Object>} kõik hetkel serverist laetud story'd, prioriteedi järjekorras */
 let stories = [];
@@ -38,6 +39,7 @@ const el = {
   modalIdLabel: document.getElementById('modalIdLabel'),
   closeModalBtn: document.getElementById('closeModalBtn'),
   titleInput: document.getElementById('titleInput'),
+  titleCounter: document.getElementById('titleCounter'),
   statusInput: document.getElementById('statusInput'),
   pointsInput: document.getElementById('pointsInput'),
   datesCol: document.getElementById('datesCol'),
@@ -304,6 +306,14 @@ el.maxPoints.addEventListener('input', () => {
   render();
 });
 
+// ---------- Modal: pealkirja märgiloendur ----------
+function updateTitleCounter() {
+  const length = el.titleInput.value.length;
+  el.titleCounter.textContent = `${length} / ${TITLE_MAX_LENGTH}`;
+  el.titleCounter.classList.toggle('near-limit', length >= TITLE_MAX_LENGTH - 20);
+}
+el.titleInput.addEventListener('input', updateTitleCounter);
+
 // ---------- Modal: vastuvõtutingimused ----------
 function addCriterionRow(value = '') {
   const li = document.createElement('li');
@@ -387,6 +397,7 @@ function openNewStoryModal() {
   el.pointsInput.value = '';
   el.descriptionInput.value = '';
   el.datesCol.hidden = true;
+  updateTitleCounter();
   el.criteriaList.innerHTML = '';
   addCriterionRow('');
   el.commentsSection.hidden = true;
@@ -405,6 +416,7 @@ function openStoryModal(id) {
   el.pointsInput.value = story.points;
   el.descriptionInput.value = story.description;
   el.datesCol.hidden = false;
+  updateTitleCounter();
   el.datesText.innerHTML = `Loodud: ${formatDate(story.createdAt)}<br>Muudetud: ${formatDate(story.updatedAt)}`;
   el.criteriaList.innerHTML = '';
   story.acceptanceCriteria.forEach((c) => addCriterionRow(c));
