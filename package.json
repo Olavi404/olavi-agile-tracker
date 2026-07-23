@@ -4,6 +4,9 @@
   "description": "Agiilne projektijuhtimise tööriist - Kanban laud story'de haldamiseks (TAK25 kooliprojekt)",
   "main": "server.js",
   "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
