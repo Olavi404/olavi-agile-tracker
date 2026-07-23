@@ -19,6 +19,11 @@ function createApp(dataFilePath) {
     next(err);
   });
 
+  // Lihtne tervisekontroll (monitooringu/deploy-kontrolli jaoks)
+  app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok', uptime: process.uptime() });
+  });
+
   app.use('/api/stories', createStoriesRouter(store));
 
   // Tundmatu API tee -> JSON 404, mitte HTML
