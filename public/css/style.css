@@ -584,6 +584,13 @@ textarea { resize: vertical; font-family: var(--font-body); }
   max-height: 160px;
   overflow-y: auto;
 }
+.comments-empty {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin: 0.4rem 0;
+}
+
 .comment-item {
   background: rgba(18,35,58,0.05);
   border-radius: var(--radius-s);
