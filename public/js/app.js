@@ -464,6 +464,9 @@ el.saveStoryBtn.addEventListener('click', async () => {
     return showToast('Lisa vähemalt üks vastuvõtutingimus.', 'error');
   }
 
+  // Väldib topeltklikist tekkivat topeltloomist/-salvestust, kuni päring käib.
+  if (el.saveStoryBtn.disabled) return;
+  el.saveStoryBtn.disabled = true;
   try {
     if (editingId == null) {
       await api.create(payload);
@@ -476,6 +479,8 @@ el.saveStoryBtn.addEventListener('click', async () => {
     await loadStories();
   } catch (err) {
     showToast(err.message, 'error');
+  } finally {
+    el.saveStoryBtn.disabled = false;
   }
 });
 
