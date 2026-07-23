@@ -199,6 +199,7 @@ function buildCard(story) {
     card.classList.remove('dragging');
     draggedId = null;
     document.querySelectorAll('.column-body.drag-over').forEach((n) => n.classList.remove('drag-over'));
+    dropIndicator.remove();
   });
 
   return card;
@@ -238,17 +239,30 @@ function computeNewOrder(fullIds, draggedStoryId, afterId, targetStatus, stories
   return rest;
 }
 
+const dropIndicator = document.createElement('div');
+dropIndicator.className = 'drop-indicator';
+
 Object.values(columnBodies).forEach((body) => {
   body.addEventListener('dragover', (e) => {
     e.preventDefault();
     body.classList.add('drag-over');
+    const afterEl = getDragAfterElement(body, e.clientY);
+    if (afterEl) {
+      body.insertBefore(dropIndicator, afterEl);
+    } else {
+      body.appendChild(dropIndicator);
+    }
   });
   body.addEventListener('dragleave', (e) => {
-    if (e.target === body) body.classList.remove('drag-over');
+    if (e.target === body) {
+      body.classList.remove('drag-over');
+      dropIndicator.remove();
+    }
   });
   body.addEventListener('drop', async (e) => {
     e.preventDefault();
     body.classList.remove('drag-over');
+    dropIndicator.remove();
     if (draggedId == null) return;
 
     const targetStatus = body.dataset.status;
