@@ -355,6 +355,13 @@ el.addCriterionBtn.addEventListener('click', () => {
 // ---------- Modal: kommentaarid ----------
 function renderComments(story) {
   el.commentsList.innerHTML = '';
+  if (story.comments.length === 0) {
+    const empty = document.createElement('li');
+    empty.className = 'comments-empty';
+    empty.textContent = 'Kommentaare pole veel. Ole esimene!';
+    el.commentsList.appendChild(empty);
+    return;
+  }
   story.comments.forEach((comment) => {
     const li = document.createElement('li');
     li.className = 'comment-item';
