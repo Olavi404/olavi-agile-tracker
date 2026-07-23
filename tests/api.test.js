@@ -229,6 +229,62 @@ test('POST /api/stories/:id/comments lisab kommentaari koos ajaga', async () => 
   }
 });
 
+test('GET /api/health tagastab oleku "ok"', async () => {
+  const { baseUrl, cleanup } = await startTestServer();
+  try {
+    const res = await fetch(`${baseUrl}/api/health`);
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.status, 'ok');
+  } finally {
+    cleanup();
+  }
+});
+
+test('GET /api/stories filtreerib staatuse, otsingu ja punktivahemiku järgi', async () => {
+  const { baseUrl, cleanup } = await startTestServer();
+  try {
+    const stories = [
+      { title: 'Sisselogimine', description: 'Kasutaja saab sisse logida', status: 'todo', points: 3, acceptanceCriteria: ['x'] },
+      { title: 'Väljalogimine', description: 'Kasutaja saab välja logida', status: 'doing', points: 8, acceptanceCriteria: ['x'] },
+      { title: 'Profiili muutmine', description: 'Kasutaja saab profiili muuta', status: 'done', points: 5, acceptanceCriteria: ['x'] },
+    ];
+    for (const s of stories) {
+      await fetch(`${baseUrl}/api/stories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(s),
+      });
+    }
+
+    const statusRes = await fetch(`${baseUrl}/api/stories?status=doing`);
+    const statusBody = await statusRes.json();
+    assert.equal(statusBody.length, 1);
+    assert.equal(statusBody[0].title, 'Väljalogimine');
+
+    const searchRes = await fetch(`${baseUrl}/api/stories?search=logi`);
+    const searchBody = await searchRes.json();
+    assert.equal(searchBody.length, 2);
+
+    const pointsRes = await fetch(`${baseUrl}/api/stories?minPoints=4&maxPoints=8`);
+    const pointsBody = await pointsRes.json();
+    assert.equal(pointsBody.length, 2);
+    assert.ok(pointsBody.every((s) => s.points >= 4 && s.points <= 8));
+  } finally {
+    cleanup();
+  }
+});
+
+test('GET /api/stories tagastab 400 vigase staatuse filtriga', async () => {
+  const { baseUrl, cleanup } = await startTestServer();
+  try {
+    const res = await fetch(`${baseUrl}/api/stories?status=blocked`);
+    assert.equal(res.status, 400);
+  } finally {
+    cleanup();
+  }
+});
+
 test('DELETE /api/stories/:id kustutab story', async () => {
   const { baseUrl, cleanup } = await startTestServer();
   try {
