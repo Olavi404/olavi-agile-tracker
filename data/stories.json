@@ -1,0 +1,78 @@
+{
+  "stories": [
+    {
+      "id": 1,
+      "title": "Kasutajana tahan lisada uue story, et saaksin tööülesande backlogi panna.",
+      "description": "Loo vorm, kuhu saab sisestada uue story pealkirja, kirjelduse ja punktid. Salvestamisel lisatakse story Todo / Backlog veergu.",
+      "status": "todo",
+      "points": 3,
+      "priority": 1,
+      "acceptanceCriteria": [
+        "Vormis saab sisestada pealkirja.",
+        "Vormis saab sisestada kirjelduse.",
+        "Vormis saab sisestada punktid.",
+        "Salvestamisel ilmub story Todo / Backlog veergu."
+      ],
+      "comments": [],
+      "createdAt": "2026-07-01T08:00:00.000Z",
+      "updatedAt": "2026-07-01T08:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "Kasutajana tahan muuta story staatust, et näidata töö edenemist.",
+      "description": "Story detailvaates või kaardil peab saama valida uue staatuse (todo, doing, done) ning story liigub vastavasse veergu.",
+      "status": "doing",
+      "points": 5,
+      "priority": 2,
+      "acceptanceCriteria": [
+        "Story staatust saab muuta.",
+        "Lubatud staatused on todo, doing ja done.",
+        "Story liigub õige staatuse veergu."
+      ],
+      "comments": [
+        {
+          "id": 1,
+          "text": "Alustasin API poolega, UI tuleb homme.",
+          "createdAt": "2026-07-02T09:15:00.000Z"
+        }
+      ],
+      "createdAt": "2026-07-01T08:05:00.000Z",
+      "updatedAt": "2026-07-02T09:15:00.000Z"
+    },
+    {
+      "id": 3,
+      "title": "Kasutajana tahan lisada story juurde kommentaare, et arutelu oleks story juures nähtav.",
+      "description": "Story detailvaates peab olema kommentaaride sektsioon, kus saab kommentaari lisada ning kus kuvatakse olemasolevad kommentaarid koos lisamise ajaga.",
+      "status": "todo",
+      "points": 3,
+      "priority": 3,
+      "acceptanceCriteria": [
+        "Kommentaari saab sisestada.",
+        "Kommentaari saab salvestada.",
+        "Kommentaar kuvatakse story juures.",
+        "Kommentaari juures kuvatakse lisamise aeg."
+      ],
+      "comments": [],
+      "createdAt": "2026-07-01T08:10:00.000Z",
+      "updatedAt": "2026-07-01T08:10:00.000Z"
+    },
+    {
+      "id": 4,
+      "title": "Kasutajana tahan backlogi story'sid ümber järjestada, et saaksin määrata prioriteedi.",
+      "description": "Backlogi (Todo) veerus peab saama story'sid hiirega lohistades ümber järjestada. Uus järjekord peab säilima ka pärast lehe uuendamist.",
+      "status": "todo",
+      "points": 8,
+      "priority": 4,
+      "acceptanceCriteria": [
+        "Backlogis olevaid story'sid saab hiirega lohistada.",
+        "Uus järjekord salvestatakse.",
+        "Pärast lehe uuendamist jääb järjekord samaks."
+      ],
+      "comments": [],
+      "createdAt": "2026-07-01T08:15:00.000Z",
+      "updatedAt": "2026-07-01T08:15:00.000Z"
+    }
+  ],
+  "nextId": 5,
+  "nextCommentId": 2
+}

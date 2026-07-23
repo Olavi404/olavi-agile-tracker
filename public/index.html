@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agile Tracker · TAK25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="grid-overlay" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">⌐&nbsp;&nbsp;⌐</span>
+    <div class="brand-text">
+      <h1>Agile&nbsp;Tracker</h1>
+      <p class="brand-sub">TAK25 · SPEC&nbsp;NR&nbsp;001 · Story'de haldamine Kanban-laual</p>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="field">
+      <label class="field-label" for="searchInput">Otsi</label>
+      <input id="searchInput" type="search" placeholder="pealkiri või kirjeldus…" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label class="field-label" for="statusFilter">Staatus</label>
+      <select id="statusFilter">
+        <option value="all">Kõik</option>
+        <option value="todo">Todo</option>
+        <option value="doing">Doing</option>
+        <option value="done">Done</option>
+      </select>
+    </div>
+    <div class="field points-field">
+      <span class="field-label">Punktid</span>
+      <div class="points-inputs">
+        <input id="minPoints" type="number" min="0" placeholder="min" />
+        <span class="dash">–</span>
+        <input id="maxPoints" type="number" min="0" placeholder="max" />
+      </div>
+    </div>
+    <button id="newStoryBtn" class="btn btn-primary" type="button">
+      <span class="plus">+</span> Uus story
+    </button>
+  </div>
+</header>
+
+<main id="board" class="board" aria-label="Kanban laud">
+  <section class="column" data-status="todo">
+    <header class="column-header">
+      <div class="column-eyebrow">FAAS&nbsp;01</div>
+      <h2>Todo <span class="column-sub">/ Backlog</span></h2>
+      <div class="column-stats">
+        <span class="stat" data-role="count">0 story't</span>
+        <span class="stat-sep">·</span>
+        <span class="stat" data-role="points">0 pt</span>
+      </div>
+    </header>
+    <div class="column-body" data-status="todo" data-empty-text="Backlog on tühi. Lisa esimene story."></div>
+  </section>
+
+  <section class="column" data-status="doing">
+    <header class="column-header">
+      <div class="column-eyebrow">FAAS&nbsp;02</div>
+      <h2>Doing</h2>
+      <div class="column-stats">
+        <span class="stat" data-role="count">0 story't</span>
+        <span class="stat-sep">·</span>
+        <span class="stat" data-role="points">0 pt</span>
+      </div>
+    </header>
+    <div class="column-body" data-status="doing" data-empty-text="Miski pole hetkel töös."></div>
+  </section>
+
+  <section class="column" data-status="done">
+    <header class="column-header">
+      <div class="column-eyebrow">FAAS&nbsp;03</div>
+      <h2>Done</h2>
+      <div class="column-stats">
+        <span class="stat" data-role="count">0 story't</span>
+        <span class="stat-sep">·</span>
+        <span class="stat" data-role="points">0 pt</span>
+      </div>
+    </header>
+    <div class="column-body" data-status="done" data-empty-text="Veel pole midagi valmis saanud."></div>
+  </section>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Story modal: loomine / vaatamine / muutmine -->
+<div id="storyModal" class="modal-backdrop hidden">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitleLabel">
+    <div class="modal-head">
+      <span id="modalIdLabel" class="mono-tag">UUS</span>
+      <button class="icon-btn" id="closeModalBtn" type="button" aria-label="Sulge">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <label class="form-label" for="titleInput">Pealkiri</label>
+      <input id="titleInput" class="input-title" type="text" placeholder="Kasutajana tahan..." maxlength="200" />
+
+      <div class="modal-row">
+        <div class="modal-col">
+          <label class="form-label" for="statusInput">Staatus</label>
+          <select id="statusInput">
+            <option value="todo">Todo</option>
+            <option value="doing">Doing</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+        <div class="modal-col">
+          <label class="form-label" for="pointsInput">Punktid</label>
+          <input id="pointsInput" type="number" min="0" step="1" placeholder="nt 5" />
+        </div>
+        <div class="modal-col dates-col" id="datesCol" hidden>
+          <span class="form-label">Ajad</span>
+          <div class="dates-text mono" id="datesText"></div>
+        </div>
+      </div>
+
+      <label class="form-label" for="descriptionInput">Kirjeldus</label>
+      <textarea id="descriptionInput" rows="3" placeholder="Lühikirjeldus, mida tuleb teha."></textarea>
+
+      <div class="ac-section">
+        <div class="form-label-row">
+          <span class="form-label">Vastuvõtutingimused</span>
+          <button class="link-btn" id="addCriterionBtn" type="button">+ lisa tingimus</button>
+        </div>
+        <ul id="criteriaList" class="criteria-list"></ul>
+      </div>
+
+      <div class="comments-section" id="commentsSection" hidden>
+        <span class="form-label">Kommentaarid</span>
+        <ul id="commentsList" class="comments-list"></ul>
+        <div class="comment-input-row">
+          <input id="newCommentInput" type="text" placeholder="Lisa kommentaar…" maxlength="2000" />
+          <button class="btn btn-ghost" id="addCommentBtn" type="button">Lisa</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-danger" id="deleteStoryBtn" type="button" hidden>Kustuta story</button>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost" id="cancelStoryBtn" type="button">Tühista</button>
+      <button class="btn btn-primary" id="saveStoryBtn" type="button">Salvesta</button>
+    </div>
+  </div>
+</div>
+
+<!-- Kinnituse modal (kustutamine) -->
+<div id="confirmModal" class="modal-backdrop hidden">
+  <div class="modal modal-small" role="dialog" aria-modal="true">
+    <div class="modal-body">
+      <p id="confirmText">Kas oled kindel?</p>
+    </div>
+    <div class="modal-foot">
+      <div class="spacer"></div>
+      <button class="btn btn-ghost" id="confirmCancelBtn" type="button">Tühista</button>
+      <button class="btn btn-danger" id="confirmOkBtn" type="button">Kustuta</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
