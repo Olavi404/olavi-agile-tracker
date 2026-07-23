@@ -285,6 +285,51 @@ test('GET /api/stories tagastab 400 vigase staatuse filtriga', async () => {
   }
 });
 
+test('DELETE /api/stories/:id/comments/:commentId kustutab kommentaari', async () => {
+  const { baseUrl, cleanup } = await startTestServer();
+  try {
+    const createRes = await fetch(`${baseUrl}/api/stories`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'Story', description: 'x', status: 'todo', points: 1, acceptanceCriteria: ['x'] }),
+    });
+    const created = await createRes.json();
+
+    const commentRes = await fetch(`${baseUrl}/api/stories/${created.id}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'Kustutatav kommentaar' }),
+    });
+    const comment = await commentRes.json();
+
+    const delRes = await fetch(`${baseUrl}/api/stories/${created.id}/comments/${comment.id}`, { method: 'DELETE' });
+    assert.equal(delRes.status, 204);
+
+    const getRes = await fetch(`${baseUrl}/api/stories/${created.id}`);
+    const story = await getRes.json();
+    assert.equal(story.comments.length, 0);
+  } finally {
+    cleanup();
+  }
+});
+
+test('DELETE /api/stories/:id/comments/:commentId tagastab 404 tundmatu kommentaari korral', async () => {
+  const { baseUrl, cleanup } = await startTestServer();
+  try {
+    const createRes = await fetch(`${baseUrl}/api/stories`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'Story', description: 'x', status: 'todo', points: 1, acceptanceCriteria: ['x'] }),
+    });
+    const created = await createRes.json();
+
+    const delRes = await fetch(`${baseUrl}/api/stories/${created.id}/comments/9999`, { method: 'DELETE' });
+    assert.equal(delRes.status, 404);
+  } finally {
+    cleanup();
+  }
+});
+
 test('DELETE /api/stories/:id kustutab story', async () => {
   const { baseUrl, cleanup } = await startTestServer();
   try {
