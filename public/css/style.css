@@ -291,6 +291,16 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
   border-radius: var(--radius-m);
 }
 
+/* Näitab lohistamise ajal täpselt, kuhu kaart kukkumisel maandub */
+.drop-indicator {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--doing);
+  opacity: 0.85;
+  margin: -0.35rem 0;
+  flex-shrink: 0;
+}
+
 .column-body:empty::before {
   content: attr(data-empty-text);
   display: block;
