@@ -5,9 +5,7 @@ Agiilse tarkvaraprojekti story'de haldamise Kanban-tööriist. TAK25 kooliprojek
 Kolm veergu (**Todo / Backlog**, **Doing**, **Done**), REST API, hiirega lohistatav
 backlogi järjestamine ja kommentaarid iga story juures.
 
-> 📸 **Ekraanipilt:** enne esitamist tee rakendusest (käivitatuna) vähemalt üks
-> ekraanipilt ja lisa see siia, nt `docs/screenshot.png`, koos reaga
-> `![Kanban laud](docs/screenshot.png)`.
+![Kanban laud](docs/screenshot.png)
 
 ---
 
