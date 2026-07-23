@@ -122,6 +122,7 @@ Baas-URL: `/api/stories`
 
 | Meetod | Tee | Kirjeldus |
 |---|---|---|
+| `GET` | `/api/health` | Tervisekontroll (`{ "status": "ok", "uptime": ... }`), kasulik monitooringuks |
 | `GET` | `/api/stories` | Kõik story'd (prioriteedi järjekorras). Valikulised päringuparameetrid: `status`, `search`, `minPoints`, `maxPoints` |
 | `GET` | `/api/stories/:id` | Ühe story detailid |
 | `POST` | `/api/stories` | Uue story loomine (`title`, `description`, `status`, `points`, `acceptanceCriteria`) |
