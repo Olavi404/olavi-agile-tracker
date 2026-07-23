@@ -32,6 +32,7 @@ const el = {
   statusFilter: document.getElementById('statusFilter'),
   minPoints: document.getElementById('minPoints'),
   maxPoints: document.getElementById('maxPoints'),
+  clearFiltersBtn: document.getElementById('clearFiltersBtn'),
   newStoryBtn: document.getElementById('newStoryBtn'),
   toast: document.getElementById('toast'),
 
@@ -163,6 +164,7 @@ function render() {
     const pts = visible.reduce((sum, s) => sum + (Number(s.points) || 0), 0);
     column.querySelector('[data-role="points"]').textContent = `${pts} pt`;
   });
+  updateClearFiltersVisibility();
 }
 
 function buildCard(story) {
@@ -317,6 +319,24 @@ el.minPoints.addEventListener('input', () => {
 });
 el.maxPoints.addEventListener('input', () => {
   filters.max = el.maxPoints.value === '' ? null : Number(el.maxPoints.value);
+  render();
+});
+
+function updateClearFiltersVisibility() {
+  const hasActiveFilter =
+    filters.status !== 'all' || filters.search !== '' || filters.min !== null || filters.max !== null;
+  el.clearFiltersBtn.hidden = !hasActiveFilter;
+}
+
+el.clearFiltersBtn.addEventListener('click', () => {
+  el.searchInput.value = '';
+  el.statusFilter.value = 'all';
+  el.minPoints.value = '';
+  el.maxPoints.value = '';
+  filters.search = '';
+  filters.status = 'all';
+  filters.min = null;
+  filters.max = null;
   render();
 });
 
