@@ -499,9 +499,15 @@ el.confirmModal.addEventListener('click', (e) => {
   if (e.target === el.confirmModal) closeConfirmModal();
 });
 el.confirmOkBtn.addEventListener('click', async () => {
+  if (el.confirmOkBtn.disabled) return;
   const action = pendingConfirmAction;
-  closeConfirmModal();
-  if (action) await action();
+  el.confirmOkBtn.disabled = true;
+  try {
+    closeConfirmModal();
+    if (action) await action();
+  } finally {
+    el.confirmOkBtn.disabled = false;
+  }
 });
 
 el.deleteStoryBtn.addEventListener('click', () => {
