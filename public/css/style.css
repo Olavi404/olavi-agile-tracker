@@ -221,9 +221,13 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
 }
 
 .column-header {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 2;
   padding: 1rem 1.1rem 0.85rem;
   border-bottom: 1px dashed var(--panel-line);
+  background: var(--panel);
+  backdrop-filter: blur(6px);
 }
 
 /* Tehnilise joonise nurgamärgid ("crop marks") — signatuurelement */
