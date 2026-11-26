@@ -1,5 +1,29 @@
 # Agile Tracker
 
+Kanban board with drag-and-drop ordering, CRUD, story points, acceptance criteria, comments, filtering and persistent JSON storage.
+
+## Technology stack
+
+Node.js, Express 4, HTML, CSS, vanilla JavaScript, JSON file storage.
+
+## Getting started
+
+Run `npm ci` and `npm start`; open `http://localhost:3000`.
+
+## Testing
+
+`npm test` (Node.js test runner).
+
+## Scope and limitations
+
+Single-user educational application. No authentication or file locking; not intended for concurrent production use.
+
+---
+
+## Original project documentation (Estonian)
+
+# Agile Tracker
+
 Agiilse tarkvaraprojekti story'de haldamise Kanban-tööriist. TAK25 kooliprojekt.
 
 Kolm veergu (**Todo / Backlog**, **Doing**, **Done**), REST API, hiirega lohistatav
