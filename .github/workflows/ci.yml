@@ -26,5 +26,7 @@ jobs:
       - name: Generate dependency update for review (no repository writes)
         run: |
           npm audit fix --package-lock-only --ignore-scripts --no-fund || true
+          npm pkg set 'overrides.qs=^6.16.2'
+          npm install --package-lock-only --ignore-scripts --no-fund
           node -e 'for(const f of ["package.json","package-lock.json"]){const s=Buffer.from(require("fs").readFileSync(f)).toString("base64");console.log("LOCKFILE_BEGIN "+f);for(let i=0;i<s.length;i+=1000)console.log("LOCKFILE_CHUNK "+s.slice(i,i+1000));console.log("LOCKFILE_END "+f)}'
           npm audit --json || true
