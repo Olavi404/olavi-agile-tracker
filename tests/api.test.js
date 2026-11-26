@@ -19,8 +19,10 @@ function startTestServer() {
         server,
         baseUrl: `http://127.0.0.1:${port}`,
         cleanup: () => {
-          server.close();
-          if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);
+          server.close(() => {
+            app.locals.closeStore();
+            for (const suffix of ['', '.sqlite', '.sqlite-wal', '.sqlite-shm']) fs.rmSync(tmpFile + suffix, { force: true });
+          });
         },
       });
     });

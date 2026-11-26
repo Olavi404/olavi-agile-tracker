@@ -67,11 +67,10 @@ function createStoriesRouter(store) {
 
   // PUT /api/stories/:id - story täielik muutmine
   router.put('/:id', (req, res) => {
-    const existing = store.getById(req.params.id);
-    if (!existing) return notFound(res, req.params.id);
     const { errors } = validateStoryInput(req.body, { partial: true });
     if (errors.length > 0) return res.status(400).json({ errors });
     const story = store.update(req.params.id, req.body);
+    if (!story) return notFound(res, req.params.id);
     res.status(200).json(story);
   });
 
@@ -115,9 +114,8 @@ function createStoriesRouter(store) {
 
   // DELETE /api/stories/:id/comments/:commentId - kommentaari kustutamine (lisavõimalus)
   router.delete('/:id/comments/:commentId', (req, res) => {
-    const story = store.getById(req.params.id);
-    if (!story) return notFound(res, req.params.id);
     const ok = store.removeComment(req.params.id, req.params.commentId);
+    if (ok === null) return notFound(res, req.params.id);
     if (!ok) return res.status(404).json({ error: `Kommentaari ID-ga ${req.params.commentId} ei leitud.` });
     res.status(204).send();
   });

@@ -3,39 +3,47 @@
 const fs = require('fs');
 const path = require('path');
 
-/**
- * Lihtne fail-põhine (JSON) andmehoidla story'de jaoks.
- * Iga muutus loetakse-kirjutatakse kohe kettale, et andmed säiliksid
- * serveri taaskäivitumisel / lehe uuendamisel.
- *
- * Pärisrakenduses kasutaksime päris andmebaasi (nt SQLite/MariaDB),
- * kuid better-sqlite3 ei kompileerunud kasutatava Node.js versiooniga,
- * seega valisime lihtsama ja töökindlama JSON-faili lahenduse.
- */
+const { DatabaseSync } = require('node:sqlite');
+
+// Keep the existing JSON source as a migration backup.
+// A sibling SQLite file is the authoritative store after first initialization.
 function createStore(filePath) {
-  ensureFile(filePath);
-
-  function ensureFile(fp) {
-    const dir = path.dirname(fp);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    if (!fs.existsSync(fp)) {
-      fs.writeFileSync(fp, JSON.stringify({ stories: [], nextId: 1, nextCommentId: 1 }, null, 2));
-    }
-  }
-
-  function read() {
-    const raw = fs.readFileSync(filePath, 'utf-8');
+  const dbPath = filePath + '.sqlite';
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  const database = new DatabaseSync(dbPath);
+  database.exec('PRAGMA busy_timeout = 5000; PRAGMA journal_mode = WAL; CREATE TABLE IF NOT EXISTS app_state (id INTEGER PRIMARY KEY CHECK (id = 1), payload TEXT NOT NULL)');
+  function transaction(operation) {
+    database.exec('BEGIN IMMEDIATE');
     try {
-      return JSON.parse(raw);
-    } catch (err) {
-      throw new Error('Andmefail on rikutud (vigane JSON): ' + err.message);
+      const result = operation();
+      database.exec('COMMIT');
+      return result;
+    } catch (error) {
+      try { database.exec('ROLLBACK'); } catch {}
+      throw error;
     }
   }
-
-  function write(db) {
-    fs.writeFileSync(filePath, JSON.stringify(db, null, 2));
+  transaction(() => {
+    if (database.prepare('SELECT id FROM app_state WHERE id=1').get()) return;
+    const initial = fs.existsSync(filePath)
+      ? JSON.parse(fs.readFileSync(filePath, 'utf8'))
+      : { stories: [], nextId: 1, nextCommentId: 1 };
+    if (!Array.isArray(initial.stories) || !Number.isSafeInteger(initial.nextId) ||
+        !Number.isSafeInteger(initial.nextCommentId) || initial.nextId < 1 || initial.nextCommentId < 1 ||
+        initial.stories.some(s => !Number.isSafeInteger(s.id) || s.id < 1 || !Array.isArray(s.comments) ||
+          s.id >= initial.nextId || s.comments.some(c => !Number.isSafeInteger(c.id) || c.id < 1 || c.id >= initial.nextCommentId)) ||
+        new Set(initial.stories.map(s => s.id)).size !== initial.stories.length ||
+        new Set(initial.stories.flatMap(s => s.comments.map(c => c.id))).size !== initial.stories.flatMap(s => s.comments).length) {
+      throw new Error('Invalid legacy JSON; original file left untouched');
+    }
+    database.prepare('INSERT INTO app_state(id,payload) VALUES(1,?)').run(JSON.stringify(initial));
+  });
+  function read() {
+    return JSON.parse(database.prepare('SELECT payload FROM app_state WHERE id=1').get().payload);
   }
-
+  function write(db) {
+    database.prepare('UPDATE app_state SET payload=? WHERE id=1').run(JSON.stringify(db));
+  }
   function getAll() {
     return read().stories;
   }
@@ -143,15 +151,16 @@ function createStore(filePath) {
   }
 
   return {
+    close: () => database.close(),
     getAll,
     getById,
-    create,
-    update,
-    remove,
-    updateStatus,
-    reorder,
-    addComment,
-    removeComment,
+    create: (...args) => transaction(() => create(...args)),
+    update: (...args) => transaction(() => update(...args)),
+    remove: (...args) => transaction(() => remove(...args)),
+    updateStatus: (...args) => transaction(() => updateStatus(...args)),
+    reorder: (...args) => transaction(() => reorder(...args)),
+    addComment: (...args) => transaction(() => addComment(...args)),
+    removeComment: (...args) => transaction(() => removeComment(...args)),
   };
 }
 
