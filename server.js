@@ -18,6 +18,7 @@ const server = app.listen(PORT, () => {
 function shutdown(signal) {
   console.log(`\n${signal} saadud, suletakse serverit...`);
   server.close(() => {
+    app.locals.closeStore();
     console.log('Server suletud.');
     process.exit(0);
   });

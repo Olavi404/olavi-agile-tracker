@@ -30,9 +30,10 @@ function createStore(filePath) {
       : { stories: [], nextId: 1, nextCommentId: 1 };
     if (!Array.isArray(initial.stories) || !Number.isSafeInteger(initial.nextId) ||
         !Number.isSafeInteger(initial.nextCommentId) || initial.nextId < 1 || initial.nextCommentId < 1 ||
-        initial.stories.some(s => !Number.isSafeInteger(s.id) || !Array.isArray(s.comments) ||
-          s.id >= initial.nextId || s.comments.some(c => !Number.isSafeInteger(c.id) || c.id >= initial.nextCommentId)) ||
-        new Set(initial.stories.map(s => s.id)).size !== initial.stories.length) {
+        initial.stories.some(s => !Number.isSafeInteger(s.id) || s.id < 1 || !Array.isArray(s.comments) ||
+          s.id >= initial.nextId || s.comments.some(c => !Number.isSafeInteger(c.id) || c.id < 1 || c.id >= initial.nextCommentId)) ||
+        new Set(initial.stories.map(s => s.id)).size !== initial.stories.length ||
+        new Set(initial.stories.flatMap(s => s.comments.map(c => c.id))).size !== initial.stories.flatMap(s => s.comments).length) {
       throw new Error('Invalid legacy JSON; original file left untouched');
     }
     database.prepare('INSERT INTO app_state(id,payload) VALUES(1,?)').run(JSON.stringify(initial));

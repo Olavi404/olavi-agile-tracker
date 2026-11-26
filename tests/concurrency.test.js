@@ -40,3 +40,15 @@ test('existing JSON migrated once', () => {
   store=createStore(file);
   try { assert.equal(store.getAll().length,2); } finally { store.close(); fs.rmSync(dir,{recursive:true,force:true}); }
 });
+
+test('deleted story cannot be updated by another connection', () => {
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'agile-race-'));
+  const file=path.join(dir,'stories.json');
+  const a=createStore(file), b=createStore(file);
+  try {
+    const s=a.create({title:'test',points:1,acceptanceCriteria:['done']});
+    assert.equal(b.remove(s.id),true);
+    assert.equal(a.update(s.id,{title:'changed'}),null);
+    assert.equal(a.removeComment(s.id,1),null);
+  } finally { a.close(); b.close(); fs.rmSync(dir,{recursive:true,force:true}); }
+});
