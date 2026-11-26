@@ -8,6 +8,7 @@ const { createStoriesRouter } = require('./routes/stories');
 function createApp(dataFilePath) {
   const store = createStore(dataFilePath);
   const app = express();
+  app.locals.closeStore = () => store.close();
 
   app.use(express.json());
 

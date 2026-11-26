@@ -1,3 +1,11 @@
+# Agile Tracker — SQLite storage update
+
+Requires Node.js 22.13 or newer. Existing JSON file is imported only once into a sibling `.sqlite` file; keep the original as backup. The SQLite database is authoritative thereafter. Back up the database before rollback; rolling back to the old JSON code does not include new writes. Existing API remains unchanged. WAL and BEGIN IMMEDIATE serialize writes across processes on the same local filesystem. Run `npm ci && npm test`.
+
+---
+
+Historical project documentation below describes the original JSON implementation.
+
 # Agile Tracker
 
 Kanban board with drag-and-drop ordering, CRUD, story points, acceptance criteria, comments, filtering and persistent JSON storage.
